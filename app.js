@@ -24,29 +24,31 @@ Promise.all(numPromises).then((res) => {
 });
 
 function deckOfCards() {
-  axios.get('https://deckofcardsapi.com/api/deck/new/').then((res) => {
-    document.querySelector('button').addEventListener('click', () => {
-      axios
-        .get(
-          `https://deckofcardsapi.com/api/deck/${res.data.deck_id}/draw/?count=1`
-        )
-        .then((res) => {
-          if (res.data.remaining == 0) {
-            document.querySelector('button').style.display = 'none';
-          } else {
-            if ('content' in document.createElement('template')) {
-              const container = document.querySelector('.playingCards');
-              const temp = document.querySelector('.card-template');
-              let clone = temp.content.cloneNode(true);
-              let img = clone.querySelector('img');
-              img.src = `${res.data.cards[0].image}`;
-              container.appendChild(clone);
+  axios
+    .get('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1')
+    .then((res) => {
+      document.querySelector('button').addEventListener('click', () => {
+        axios
+          .get(
+            `https://deckofcardsapi.com/api/deck/${res.data.deck_id}/draw/?count=1`
+          )
+          .then((res) => {
+            if (res.data.remaining == 0) {
+              document.querySelector('button').style.display = 'none';
+            } else {
+              if ('content' in document.createElement('template')) {
+                const container = document.querySelector('.playingCards');
+                const temp = document.querySelector('.card-template');
+                let clone = temp.content.cloneNode(true);
+                let img = clone.querySelector('img');
+                img.src = `${res.data.cards[0].image}`;
+                container.appendChild(clone);
+              }
             }
-          }
-        })
-        .catch((err) => console.log(err));
+          })
+          .catch((err) => console.log(err));
+      });
     });
-  });
 }
 
 window.onload = function () {
